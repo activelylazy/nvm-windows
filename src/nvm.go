@@ -9,10 +9,10 @@ import (
 	"regexp"
 	"strings"
 
-	"./nvm/arch"
-	"./nvm/file"
-	"./nvm/node"
-	"./nvm/web"
+	"github.com/activelylazy/nvm-windows/src/nvm/arch"
+	"github.com/activelylazy/nvm-windows/src/nvm/file"
+	"github.com/activelylazy/nvm-windows/src/nvm/node"
+	"github.com/activelylazy/nvm-windows/src/nvm/web"
 	"github.com/olekukonko/tablewriter"
 )
 

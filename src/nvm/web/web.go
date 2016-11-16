@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"../arch"
-	"../file"
+	"github.com/activelylazy/nvm-windows/src/nvm/arch"
+	"github.com/activelylazy/nvm-windows/src/nvm/file"
 )
 
 var client = &http.Client{}

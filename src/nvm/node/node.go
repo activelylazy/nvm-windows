@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"../arch"
-	"../file"
-	"../semver"
-	"../web"
+	"github.com/activelylazy/nvm-windows/src/nvm/arch"
+	"github.com/activelylazy/nvm-windows/src/nvm/file"
+	"github.com/activelylazy/nvm-windows/src/nvm/semver"
+	"github.com/activelylazy/nvm-windows/src/nvm/web"
 )
 
 /**

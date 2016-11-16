@@ -17,28 +17,28 @@ import (
 )
 
 const (
-	NvmVersion = "1.1.1"
+	nvmVersion = "1.1.1"
 )
 
-type Environment struct {
+type environment struct {
 	settings        string
 	root            string
 	symlink         string
 	arch            string
-	node_mirror     string
-	npm_mirror      string
+	nodeMirror      string
+	npmMirror       string
 	proxy           string
 	originalpath    string
 	originalversion string
 }
 
-var env = &Environment{
+var env = &environment{
 	settings:        os.Getenv("NVM_HOME") + "\\settings.txt",
 	root:            "",
 	symlink:         os.Getenv("NVM_SYMLINK"),
 	arch:            os.Getenv("PROCESSOR_ARCHITECTURE"),
-	node_mirror:     "",
-	npm_mirror:      "",
+	nodeMirror:      "",
+	npmMirror:       "",
 	proxy:           "none",
 	originalpath:    "",
 	originalversion: "",
@@ -49,7 +49,7 @@ func main() {
 	detail := ""
 	procarch := arch.Validate(env.arch)
 
-	Setup()
+	setup()
 
 	// Capture any additional arguments
 	if len(args) > 2 {
@@ -86,9 +86,9 @@ func main() {
 			fmt.Println("\nCurrent Root: " + env.root)
 		}
 	case "version":
-		fmt.Println(NvmVersion)
+		fmt.Println(nvmVersion)
 	case "v":
-		fmt.Println(NvmVersion)
+		fmt.Println(nvmVersion)
 	case "arch":
 		if strings.Trim(detail, " \r\n") != "" {
 			detail = strings.Trim(detail, " \r\n")
@@ -131,7 +131,7 @@ func update() {
 	//  }
 }
 
-func CheckVersionExceedsLatest(version string) bool {
+func checkVersionExceedsLatest(version string) bool {
 	//content := web.GetRemoteTextFile("http://nodejs.org/dist/latest/SHASUMS256.txt")
 	url := web.GetFullNodeUrl("latest/SHASUMS256.txt")
 	content := web.GetRemoteTextFile(url)
@@ -139,11 +139,7 @@ func CheckVersionExceedsLatest(version string) bool {
 	reg := regexp.MustCompile("node-v|-x.+")
 	latest := reg.ReplaceAllString(re.FindString(content), "")
 
-	if version <= latest {
-		return false
-	} else {
-		return true
-	}
+	return version > latest
 }
 
 func install(version string, cpuarch string) {
@@ -180,7 +176,7 @@ func install(version string, cpuarch string) {
 
 	version = cleanVersion(version)
 
-	if CheckVersionExceedsLatest(version) {
+	if checkVersionExceedsLatest(version) {
 		fmt.Println("Node.js v" + version + " is not yet released or available.")
 		return
 	}
@@ -256,13 +252,9 @@ func install(version string, cpuarch string) {
 
 		// If this is ever shipped for Mac, it should use homebrew.
 		// If this ever ships on Linux, it should be on bintray so it can use yum, apt-get, etc.
-
-		return
 	} else {
 		fmt.Println("Version " + version + " is already installed.")
-		return
 	}
-
 }
 
 func uninstall(version string) {
@@ -520,7 +512,7 @@ func disable() {
 }
 
 func help() {
-	fmt.Println("\nRunning version " + NvmVersion + ".")
+	fmt.Println("\nRunning version " + nvmVersion + ".")
 	fmt.Println("\nUsage:")
 	fmt.Println(" ")
 	fmt.Println("  nvm arch                     : Show if node is running in 32 or 64 bit mode.")
@@ -566,11 +558,11 @@ func updateRootDir(path string) {
 
 func saveSettings() {
 	content := "root: " + strings.Trim(env.root, " \n\r") + "\r\narch: " + strings.Trim(env.arch, " \n\r") + "\r\nproxy: " + strings.Trim(env.proxy, " \n\r") + "\r\noriginalpath: " + strings.Trim(env.originalpath, " \n\r") + "\r\noriginalversion: " + strings.Trim(env.originalversion, " \n\r")
-	content = content + "node_mirror: " + strings.Trim(env.node_mirror, " \n\r") + "npm_mirror: " + strings.Trim(env.npm_mirror, " \n\r")
+	content = content + "node_mirror: " + strings.Trim(env.nodeMirror, " \n\r") + "npm_mirror: " + strings.Trim(env.npmMirror, " \n\r")
 	ioutil.WriteFile(env.settings, []byte(content), 0644)
 }
 
-func Setup() {
+func setup() {
 	lines, err := file.ReadLines(env.settings)
 	if err != nil {
 		fmt.Println("\nERROR", err)
@@ -589,9 +581,9 @@ func Setup() {
 		} else if strings.HasPrefix(line, "arch:") {
 			env.arch = strings.TrimSpace(regexp.MustCompile("^arch:").ReplaceAllString(line, ""))
 		} else if strings.HasPrefix(line, "node_mirror:") {
-			env.node_mirror = strings.TrimSpace(regexp.MustCompile("^node_mirror:").ReplaceAllString(line, ""))
+			env.nodeMirror = strings.TrimSpace(regexp.MustCompile("^node_mirror:").ReplaceAllString(line, ""))
 		} else if strings.HasPrefix(line, "npm_mirror:") {
-			env.npm_mirror = strings.TrimSpace(regexp.MustCompile("^npm_mirror:").ReplaceAllString(line, ""))
+			env.npmMirror = strings.TrimSpace(regexp.MustCompile("^npm_mirror:").ReplaceAllString(line, ""))
 		} else if strings.HasPrefix(line, "proxy:") {
 			env.proxy = strings.TrimSpace(regexp.MustCompile("^proxy:").ReplaceAllString(line, ""))
 			if env.proxy != "none" && env.proxy != "" {
@@ -603,7 +595,7 @@ func Setup() {
 		}
 	}
 
-	web.SetMirrors(env.node_mirror, env.npm_mirror)
+	web.SetMirrors(env.nodeMirror, env.npmMirror)
 	env.arch = arch.Validate(env.arch)
 
 	// Make sure the directories exist
